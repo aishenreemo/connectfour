@@ -16,7 +16,7 @@ public class App extends JFrame {
         this.setLocationRelativeTo(null);
         this.setResizable(false);
 
-        this.add(new GamePanel(this.getSize()), BorderLayout.CENTER);
+        this.add(GamePanel.getInstance(this.getSize()), BorderLayout.CENTER);
         this.add(new InfoPanel(this.getSize()), BorderLayout.EAST);
 
         this.setVisible(true);
