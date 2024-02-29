@@ -1,11 +1,9 @@
 package com.connectfour;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Color;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 public class App extends JFrame {
     public App() {
@@ -29,22 +27,6 @@ public class App extends JFrame {
     }
 }
 
-class GamePanel extends JPanel {
-    public GamePanel(Dimension windowSize) {
-        int width = (int) (windowSize.width * 0.70);
-
-        this.setPreferredSize(new Dimension(width, windowSize.height));
-        this.setBackground(Palette.BACKGROUND.getColor());
-    }
-}
-
-class InfoPanel extends JPanel {
-    public InfoPanel(Dimension windowSize) {
-        int width = (int) (windowSize.width * 0.30);
-        this.setPreferredSize(new Dimension(width, windowSize.height));
-        this.setBackground(Palette.BACKGROUND.getColor());
-    }
-}
 
 enum Palette {
     BACKGROUND("#0B0F10"),
