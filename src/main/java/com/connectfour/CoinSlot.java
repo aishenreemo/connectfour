@@ -2,7 +2,6 @@ package com.connectfour;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -74,7 +73,7 @@ public class CoinSlot extends JButton {
 class CoinSlotActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (App.getInstance().state == App.MENU_STATE) {
+        if (App.getInstance().state != App.PLAYING_STATE) {
             return;
         };
 

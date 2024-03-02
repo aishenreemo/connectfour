@@ -7,8 +7,9 @@ import javax.swing.JFrame;
 public class App extends JFrame {
     private static App instance;
 
-    public final static int PLAYING_STATE = 0;
-    public final static int MENU_STATE = 1;
+    public final static int MENU_STATE = 0;
+    public final static int PLAYING_STATE = 1;
+    public final static int ENDING_STATE = 2;
 
     public int state;
 

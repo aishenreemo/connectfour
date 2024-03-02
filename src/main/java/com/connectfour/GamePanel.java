@@ -1,9 +1,16 @@
 package com.connectfour;
 
+import java.awt.BasicStroke;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.RenderingHints;
 
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel {
@@ -93,12 +100,84 @@ public class GamePanel extends JPanel {
             break;
         }
 
+        if (this.isWinner()) {
+            InfoPanel info = InfoPanel.getInstance(null);
+            App app = App.getInstance();
+
+            app.state = App.ENDING_STATE;
+            info.setWinner(this.currentTurn);
+            return;
+        }
+
         this.currentTurn = this.currentTurn.type == CoinVariant.BLUE.type 
             ? CoinVariant.RED 
             : CoinVariant.BLUE;
 
         this.hoverColumn(column);
         this.repaint();
+    }
+
+    public boolean isWinner() {
+        int rows = this.slots[0].length;
+        int cols = this.slots.length;
+
+        for (int i = 0; i < rows * (cols - 3); i++) {
+            int col = i % (cols - 3);
+            int row = i / (cols - 3);
+
+            if (
+                this.slots[col][row].variant.type != CoinVariant.NONE.type &&
+                this.slots[col][row].variant.type == this.slots[col + 1][row].variant.type &&
+                this.slots[col][row].variant.type == this.slots[col + 2][row].variant.type &&
+                this.slots[col][row].variant.type == this.slots[col + 3][row].variant.type
+            ) {
+                return true;
+            }
+        }
+
+        for (int i = 0; i < (rows - 3) * cols; i++) {
+            int col = i % cols;
+            int row = i / cols;
+
+            if (
+                this.slots[col][row].variant.type != CoinVariant.NONE.type &&
+                this.slots[col][row].variant.type == this.slots[col][row + 1].variant.type &&
+                this.slots[col][row].variant.type == this.slots[col][row + 2].variant.type &&
+                this.slots[col][row].variant.type == this.slots[col][row + 3].variant.type
+            ) {
+                return true;
+            }
+        }
+
+        for (int i = 0; i < (rows - 3) * (cols - 3); i++) {
+            int col = i % (cols - 3);
+            int row = i / (cols - 3);
+
+            if (
+                this.slots[col][row].variant.type != CoinVariant.NONE.type &&
+                this.slots[col][row].variant.type == this.slots[col + 1][row + 1].variant.type &&
+                this.slots[col][row].variant.type == this.slots[col + 2][row + 2].variant.type &&
+                this.slots[col][row].variant.type == this.slots[col + 3][row + 3].variant.type
+            ) {
+                return true;
+            }
+        }
+
+        for (int i = 0; i < (rows - 3) * (cols - 3); i++) {
+            int col = i % (cols - 3);
+            int row = i / (cols - 3) + 3;
+
+            if (
+                this.slots[col][row].variant.type != CoinVariant.NONE.type &&
+                this.slots[col][row].variant.type == this.slots[col + 1][row - 1].variant.type &&
+                this.slots[col][row].variant.type == this.slots[col + 2][row - 2].variant.type &&
+                this.slots[col][row].variant.type == this.slots[col + 3][row - 3].variant.type
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void clearRandomColors() {
@@ -137,4 +216,3 @@ public class GamePanel extends JPanel {
         return GamePanel.instance;
     }
 }
-
