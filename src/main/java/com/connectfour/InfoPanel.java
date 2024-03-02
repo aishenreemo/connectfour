@@ -16,7 +16,7 @@ public class InfoPanel extends JPanel {
     private static InfoPanel instance;
 
     public InfoPanel(Dimension windowSize) {
-        int width = (int) (windowSize.width * 0.30);
+        int width = (int) (windowSize.width * 0.20);
 
         this.setPreferredSize(new Dimension(width, windowSize.height));
         this.setBackground(Palette.BACKGROUND.getColor());
@@ -72,10 +72,22 @@ class PlayButton extends JButton {
 class PlayActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
-        App.getInstance().state = App.PLAYING_STATE;
-
+        App app = App.getInstance();
+        InfoPanel info = InfoPanel.getInstance(null);
         GamePanel game = GamePanel.getInstance(null);
+
+        app.state = App.PLAYING_STATE;
         game.clearRandomColors();
+        game.currentTurn = CoinVariant.BLUE;
+
+        info.removeAll();
+        info.add(new ConnectFourLabel());
+        info.add(new EmptyGap(20, 10, 10, 10));
+        info.add(new MenuButton());
+        info.add(new EmptyGap(10, 10, 10, 10));
+        info.add(new QuitButton());
+        info.revalidate();
+        info.repaint();
     }
 }
 
@@ -109,6 +121,40 @@ class QuitActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         System.exit(0); 
+    }
+}
+
+class MenuButton extends JButton {
+    public MenuButton() {
+        super("BACK TO MENU");
+        this.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        this.addActionListener(new MenuActionListener());
+    }
+}
+
+class MenuActionListener implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        App app = App.getInstance();
+        InfoPanel info = InfoPanel.getInstance(null);
+        GamePanel game = GamePanel.getInstance(null);
+
+        app.state = App.MENU_STATE;
+        game.clearRandomColors();
+        game.resetBoard();
+        game.currentTurn = CoinVariant.NONE;
+
+        info.removeAll();
+        info.add(new ConnectFourLabel());
+        info.add(new EmptyGap(10, 10, 10, 10));
+        info.add(new PlayButton());
+        info.add(new EmptyGap(10, 10, 10, 10));
+        info.add(new ClearButton());
+        info.add(new EmptyGap(10, 10, 10, 10));
+        info.add(new QuitButton());
+        info.revalidate();
+        info.repaint();
     }
 }
 

@@ -10,33 +10,34 @@ public class GamePanel extends JPanel {
     private static GamePanel instance;
 
     public CoinSlot slots[][];
+    public CoinVariant currentTurn;
     public int hoveredColumn;
+
+    public final static int COLUMNS = 7;
+    public final static int ROWS = 6;
 
     public GamePanel(Dimension windowSize) {
         int width = (int) (windowSize.width * 0.80);
-        int columns = 7;
-        int rows = 6;
 
-        GridLayout grid = new GridLayout(rows, columns, 5, 5);
         this.setPreferredSize(new Dimension(width, windowSize.height));
         this.setBackground(Palette.BACKGROUND.getColor());
-        this.setLayout(grid);
+        this.setLayout(new GridLayout(ROWS, COLUMNS, 5, 5));
         this.setBorder(BorderFactory.createEmptyBorder(65, 25, 65, 25));
 
-        this.slots = new CoinSlot[7][6];
+        this.slots = new CoinSlot[COLUMNS][ROWS];
+        this.resetBoard();
 
-        for (int i = 0; i < columns * rows; i++) {
-            int col = i % columns;
-            int row = i / columns;
-
-            this.slots[col][row] = new CoinSlot(col, row);
-            this.add(this.slots[col][row]);
-        }
+        this.currentTurn = CoinVariant.NONE;
     }
 
     public void hoverColumn(int column) {
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < ROWS; i++) {
             CoinSlot slot = this.slots[this.hoveredColumn][i];
+
+            if (!slot.isHovered) {
+                continue;
+            }
+
             slot.isHovered = false;
             slot.repaint();
         }
@@ -45,23 +46,83 @@ public class GamePanel extends JPanel {
             return;
         }
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = ROWS - 1; i >= 0; i--) {
             CoinSlot slot = this.slots[column][i];
+
+            if (slot.variant.type != CoinVariant.NONE.type) {
+                continue;
+            }
+
             slot.isHovered = true;
             slot.repaint();
+            break;
         }
 
         this.hoveredColumn = column;
     }
 
+    public void makeMoveColumn(int column) {
+        boolean isFull = true;
+
+        for (int i = 5; i >= 0; i--) {
+            CoinSlot slot = this.slots[column][i];
+
+            if (slot.variant.type != CoinVariant.NONE.type) {
+                continue;
+            }
+
+            isFull = false;
+            break;
+        }
+
+        if (isFull) {
+            return;
+        }
+
+        for (int i = 5; i >= 0; i--) {
+            CoinSlot slot = this.slots[column][i];
+
+            if (slot.variant.type != CoinVariant.NONE.type) {
+                continue;
+            }
+
+            slot.variant = this.currentTurn;
+            slot.isHovered = false;
+            slot.randomColor = null;
+            slot.repaint();
+            break;
+        }
+
+        this.currentTurn = this.currentTurn.type == CoinVariant.BLUE.type 
+            ? CoinVariant.RED 
+            : CoinVariant.BLUE;
+
+        this.hoverColumn(column);
+        this.repaint();
+    }
+
     public void clearRandomColors() {
-        for (int i = 0; i < 7 * 6; i++) {
-            CoinSlot slot = this.slots[i % 7][i / 7];
+        for (int i = 0; i < COLUMNS * ROWS; i++) {
+            CoinSlot slot = this.slots[i % COLUMNS][i / COLUMNS];
             slot.randomColor = null;
             slot.isHoveredOnMenu = false;
             slot.isHovered = false;
             slot.repaint();
         }
+    }
+
+    public void resetBoard() {
+        this.removeAll();
+        for (int i = 0; i < COLUMNS * ROWS; i++) {
+            int col = i % COLUMNS;
+            int row = i / COLUMNS;
+
+            this.slots[col][row] = new CoinSlot(col, row);
+            this.add(this.slots[col][row]);
+        }
+
+        this.revalidate();
+        this.repaint();
     }
 
     public static GamePanel getInstance(Dimension windowSize) {

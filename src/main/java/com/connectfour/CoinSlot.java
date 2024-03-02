@@ -3,6 +3,8 @@ package com.connectfour;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.Random;
@@ -34,6 +36,7 @@ public class CoinSlot extends JButton {
         this.setBorder(null);
         this.setContentAreaFilled(false);
         this.addMouseMotionListener(new CoinSlotMouseMotionListener());
+        this.addActionListener(new CoinSlotActionListener());
     }
 
     private void setRandomColor() {
@@ -41,23 +44,18 @@ public class CoinSlot extends JButton {
     }
 
     @Override
-    public boolean contains(Point p) {
-        int width = this.getWidth();
-        int height = this.getHeight();
-        int radius = Math.min(width, height) / 2;
-        double dx = p.getX() - width / 2.0;
-        double dy = p.getY() - height / 2.0;
-        return dx * dx + dy * dy <= radius * radius;
-    }
-
-    @Override
     protected void paintComponent(Graphics g) {
+        Color currentTurnColor = GamePanel.getInstance(null).currentTurn.color;
+
         int width = getWidth();
         int height = getHeight();
         int diameter = Math.min(width, height);
 
-        if (this.isHovered) {
-            g.setColor(Palette.BLUE.getColor());
+        if (this.variant.type != CoinVariant.NONE.type) {
+            g.setColor(this.variant.color);
+            g.fillOval(0, 0, diameter - 1, diameter - 1);
+        } else if (this.isHovered) {
+            g.setColor(Palette.FOREGROUND.getColor());
             g.fillOval(0, 0, diameter - 1, diameter - 1);
         } else if (this.isHoveredOnMenu && this.randomColor == null) {
             this.setRandomColor();
@@ -68,8 +66,20 @@ public class CoinSlot extends JButton {
             g.fillOval(0, 0, diameter - 1, diameter - 1);
         }
 
-        g.setColor(Palette.FOREGROUND.getColor());
+        g.setColor(currentTurnColor);
         g.drawOval(0, 0, diameter - 1, diameter - 1);
+    }
+}
+
+class CoinSlotActionListener implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (App.getInstance().state == App.MENU_STATE) {
+            return;
+        };
+
+        CoinSlot slot = (CoinSlot) e.getSource();
+        GamePanel.getInstance(null).makeMoveColumn(slot.col);
     }
 }
 
@@ -84,11 +94,12 @@ class CoinSlotMouseMotionListener implements MouseMotionListener {
             return;
         }
 
-        if (App.getInstance().state == App.MENU_STATE && !slot.isHoveredOnMenu) {
+        int appState = App.getInstance().state;
+        if (appState == App.MENU_STATE && !slot.isHoveredOnMenu) {
             slot.isHoveredOnMenu = true;
             slot.randomColor = null;
             slot.repaint();
-        } else if (App.getInstance().state == App.PLAYING_STATE) {
+        } else if (appState == App.PLAYING_STATE) {
             GamePanel.getInstance(null).hoverColumn(slot.col);
         }
 
@@ -96,17 +107,6 @@ class CoinSlotMouseMotionListener implements MouseMotionListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-    }
-}
-
-enum CoinVariant {
-    NONE(0),
-    RED(1),
-    BLUE(2);
-
-    public int type;
-    private CoinVariant(int type) {
-        this.type = type;
     }
 }
 
