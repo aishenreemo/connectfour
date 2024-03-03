@@ -14,5 +14,20 @@ public enum CoinVariant {
         this.type = type;
         this.color = color;
     }
+
+    public String getWinningMessage(){
+        if (this.type == 0) {
+            return "IT'S A DRAW!";
+        }
+
+        else if (this.type == 1) {
+            return "RED WON!";
+        }
+
+        else { 
+            return "BLUE WON!";
+        }
+    }
+
 }
 

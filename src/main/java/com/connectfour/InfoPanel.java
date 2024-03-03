@@ -3,6 +3,7 @@ package com.connectfour;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -40,6 +41,10 @@ public class InfoPanel extends JPanel {
         this.repaint();
     }
 
+    public void setDraw(){
+
+    }
+
     public static InfoPanel getInstance(Dimension windowSize) {
         if (InfoPanel.instance != null) {
             return InfoPanel.instance;
@@ -61,6 +66,7 @@ class ConnectFourLabel extends JLabel {
         this.setFont(new Font("Arial", Font.PLAIN, 18));
         this.setBorder(BorderFactory.createEmptyBorder(50, 0, 20, 0));
     }
+
 }
 
 class EmptyGap extends JLabel {
@@ -75,6 +81,15 @@ class PlayButton extends JButton {
         this.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         this.addActionListener(new PlayActionListener());
+        this.setBackground(Palette.FOREGROUND.getColor());
+        this.setContentAreaFilled(false);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        g.setColor(getBackground());
+        g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
+        super.paintComponent(g); 
     }
 }
 
@@ -107,6 +122,15 @@ class ClearButton extends JButton {
         this.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         this.addActionListener(new ClearActionListener());
+        this.setBackground(Palette.FOREGROUND.getColor());
+        this.setContentAreaFilled(false);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        g.setColor(getBackground());
+        g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
+        super.paintComponent(g); 
     }
 }
 
@@ -124,6 +148,15 @@ class QuitButton extends JButton {
         this.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         this.addActionListener(new QuitActionListener());
+        this.setBackground(Palette.FOREGROUND.getColor());
+        this.setContentAreaFilled(false);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        g.setColor(getBackground());
+        g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
+        super.paintComponent(g); 
     }
 }
 
@@ -140,6 +173,15 @@ class MenuButton extends JButton {
         this.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         this.addActionListener(new MenuActionListener());
+        this.setBackground(Palette.FOREGROUND.getColor());
+        this.setContentAreaFilled(false);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        g.setColor(getBackground());
+        g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
+        super.paintComponent(g); 
     }
 }
 
@@ -170,8 +212,7 @@ class MenuActionListener implements ActionListener {
 
 class WinnerLabel extends JLabel {
     public WinnerLabel(CoinVariant winner) {
-        super(winner.type == CoinVariant.RED.type ? "RED WON!" : "BLUE WON!");
-        
+        super(winner.getWinningMessage());
         this.setForeground(winner.color);
         this.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.setFont(new Font("Arial", Font.PLAIN, 18));
@@ -185,6 +226,15 @@ class RestartButton extends JButton {
         this.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         this.addActionListener(new MenuActionListener());
+        this.setBackground(Palette.FOREGROUND.getColor());
+        this.setContentAreaFilled(false);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        g.setColor(getBackground());
+        g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
+        super.paintComponent(g); 
     }
 }
 

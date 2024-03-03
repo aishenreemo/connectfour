@@ -15,10 +15,12 @@ public class GamePanel extends JPanel {
 
     public final static int COLUMNS = 7;
     public final static int ROWS = 6;
+    public int totalMoves;
 
     public GamePanel(Dimension windowSize) {
         int width = (int) (windowSize.width * 0.80);
 
+        this.totalMoves = 0;
         this.setPreferredSize(new Dimension(width, windowSize.height));
         this.setBackground(Palette.BACKGROUND.getColor());
         this.setLayout(new GridLayout(ROWS, COLUMNS, 5, 5));
@@ -102,6 +104,17 @@ public class GamePanel extends JPanel {
             return;
         }
 
+        this.totalMoves += 1;
+
+        if (this.totalMoves >= GamePanel.COLUMNS * GamePanel.ROWS){
+            InfoPanel info = InfoPanel.getInstance(null);
+            App app = App.getInstance();
+
+            app.state = App.ENDING_STATE;
+            info.setWinner(CoinVariant.NONE); 
+            return;
+        }
+
         this.currentTurn = this.currentTurn.type == CoinVariant.BLUE.type 
             ? CoinVariant.RED 
             : CoinVariant.BLUE;
@@ -111,12 +124,9 @@ public class GamePanel extends JPanel {
     }
 
     public boolean isWinner() {
-        int rows = this.slots[0].length;
-        int cols = this.slots.length;
-
-        for (int i = 0; i < rows * (cols - 3); i++) {
-            int col = i % (cols - 3);
-            int row = i / (cols - 3);
+        for (int i = 0; i < ROWS * (COLUMNS - 3); i++) {
+            int col = i % (COLUMNS - 3);
+            int row = i / (COLUMNS - 3);
 
             if (
                 this.slots[col][row].variant.type != CoinVariant.NONE.type &&
@@ -128,9 +138,9 @@ public class GamePanel extends JPanel {
             }
         }
 
-        for (int i = 0; i < (rows - 3) * cols; i++) {
-            int col = i % cols;
-            int row = i / cols;
+        for (int i = 0; i < (ROWS - 3) * COLUMNS; i++) {
+            int col = i % COLUMNS;
+            int row = i / COLUMNS;
 
             if (
                 this.slots[col][row].variant.type != CoinVariant.NONE.type &&
@@ -142,9 +152,9 @@ public class GamePanel extends JPanel {
             }
         }
 
-        for (int i = 0; i < (rows - 3) * (cols - 3); i++) {
-            int col = i % (cols - 3);
-            int row = i / (cols - 3);
+        for (int i = 0; i < (ROWS - 3) * (COLUMNS - 3); i++) {
+            int col = i % (COLUMNS - 3);
+            int row = i / (COLUMNS - 3);
 
             if (
                 this.slots[col][row].variant.type != CoinVariant.NONE.type &&
@@ -156,9 +166,9 @@ public class GamePanel extends JPanel {
             }
         }
 
-        for (int i = 0; i < (rows - 3) * (cols - 3); i++) {
-            int col = i % (cols - 3);
-            int row = i / (cols - 3) + 3;
+        for (int i = 0; i < (ROWS - 3) * (COLUMNS - 3); i++) {
+            int col = i % (COLUMNS - 3);
+            int row = i / (COLUMNS - 3) + 3;
 
             if (
                 this.slots[col][row].variant.type != CoinVariant.NONE.type &&
@@ -195,6 +205,7 @@ public class GamePanel extends JPanel {
 
         this.revalidate();
         this.repaint();
+        this.totalMoves = 0;
     }
 
     public static GamePanel getInstance(Dimension windowSize) {
